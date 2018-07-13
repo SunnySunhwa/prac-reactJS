@@ -6,44 +6,38 @@ import Movie from './Movie';
 
 class App extends Component {
 
-  state = {
-  }
+  state = {}
 
   componentDidMount(){
-    setTimeout(() => {
-      this.setState({
-       movies: [{
-           title: "Avengers",
-           poster: "https://images-na.ssl-images-amazon.com/images/I/719S7I-%2ByBL._SL1023_.jpg"
-         },
-         {
-           title: "The Ant man",
-           poster: "http://www.joblo.com/posters/images/full/ant-man-international-2.jpg"
-         },
-         {
-           title: "Rampage",
-           poster: "https://ae01.alicdn.com/kf/HTB1RF0gfKySBuNjy1zdq6xPxFXay/Custom-Canvas-Wall-Decals-Monster-Movie-King-Kong-Rampage-Poster-Rampage-Stickers-Dwayne-Johnson-Wallpaper-Office.jpg"
-         },
-         {
-           title: "Get out",
-           poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8F5h_cwya5bQrqunsTix3zPkEUyEGszUk3kX-NjOrlzpMuPnU"
-         },
-         {
-            title: "incredibles2",
-            poster: "https://images.penguinrandomhouse.com/cover/9780736438506"
-          }
-        ]
-      });
-    }, 2000)
+    this._getMovies();
+  } 
+
+  _callApi = () => {
+    return fetch("https://yts.am/api/v2/list_movies.json?sort_by=download_count")
+    .then(response => response.json())
+    .then( json => json.data.movies)
+    .catch(err => console.log(err))
   }
 
+
+  _getMovies = async () => {
+    const movies = await this._callApi()
+    this.setState({
+      movies
+    })
+  }  
+
+
   _renderMovies = () => {
-     const movies = this.state.movies.map((movie, idx) => {
+     const movies = this.state.movies.map((movie) => {
          return <Movie title = { movie.title }
-         poster = { movie.poster } key = { idx} />
+         poster = { movie.large_cover_image} key = { movie.id} />
        })
     return movies;
   }
+
+
+
 
 
   render() {
